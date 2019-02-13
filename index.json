@@ -1,0 +1,79 @@
+var app = require('express')();
+var path = require('path');
+var bodyParser = require('body-parser');
+const exec = require('child_process').exec;
+var fs = require('fs');
+var https = require('https');
+
+app.use(bodyParser.json({
+    limit:'50mb'
+}));
+
+app.get('/',function(req,res){
+    res.sendFile(path.join(__dirname+'/html/index.html'));
+});
+
+const options = {
+  key: fs.readFileSync("key_certificate/key/privateKey.key"),
+  cert: fs.readFileSync("key_certificate/certificate/certificate.crt")
+};
+
+app.get('/start',function(req,res){
+        exec('/bin/sh /opt/phantom/bin/start_phantom.sh',
+        (error, stdout, stderr) => {
+            if(!error){
+                console.log(`${stdout}`);
+                res.status(200).send("Successfully Started the App");
+            }else{
+                console.log("error while starting app : ",`${stderr}`);
+                res.status(500).send("Error Occured while starting the app");
+            }          
+            
+        });
+})
+
+app.get('/stop',function(req,res){
+    exec('/bin/sh /opt/phantom/bin/stop_phantom.sh',
+    (error, stdout, stderr) => {
+        if(!error){
+            console.log(`${stdout}`);
+            res.status(200).send("Successfully stoped the App");
+        }else{
+            console.log("error while stoping app : ",`${stderr}`);
+            res.status(500).send("Error Occured while stoping the app");
+        }          
+        
+    });
+})
+
+app.get('/restart',function(req,res){
+    exec('/bin/sh /opt/phantom/bin/stop_phantom.sh && /bin/sh /opt/phantom/bin/start_phantom.sh',
+    (error, stdout, stderr) => {
+        if(!error){
+            console.log(`${stdout}`);
+            res.status(200).send("Successfully restarted the App");
+        }else{
+            console.log("error while restarting app : ",`${stderr}`);
+            res.status(500).send("Error Occured while restarting the app");
+        }          
+    });
+})
+
+app.get('/pause',function(req,res){
+    exec('echo "helloWorld"',
+    (error, stdout, stderr) => {
+        if(!error){
+            console.log(`${stdout}`);
+            res.status(200).send("Successfully paused the App");
+        }else{
+            console.log("error while pausing app : ",`${stderr}`);
+            res.status(500).send("Error Occured while pausing the app");
+        }          
+    });
+})
+
+const port = process.env.PORT || '8080';
+app.set('port', port);
+
+const server = https.createServer(options, app);
+server.listen(port, () => console.log(`Running on localhost:${port}`));

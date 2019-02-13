@@ -1,0 +1,169 @@
+<html>
+
+<head>
+    <title>Node Test</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="container" style="margin-top: 80px;" id="loginScreen">
+        <form>
+            <div class="row">
+                <div class="col-xs-1 col-sm-1  col-md-3 "></div>
+                <div class="col-xs-6 col-sm-8 col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" style="background-color:black">
+                            <div class="row">
+                                <div class="col-xs-2"></div>
+                                <div class="col-xs-8">
+                                    <h3 style="color:white;"><b>Log into your account</b></h3>
+                                </div>
+                                <div class="col-xs-2"></div>
+                            </div>
+                        </div>
+                        <div class="form-group" id="userInfo">
+                            <div class="row" style="margin-top: 25px">
+                                <div class="col-xs-3" style="text-align: right">
+                                </div>
+                                <div class="col-xs-6">
+                                    <b><input data-error="Enter Contract Id" placeholder="Username" class="form-control"
+                                            type="text" id="userNameField" required></b>
+                                </div>
+                                <div class="col-xs-3">
+                                </div>
+                            </div>
+                            <div class="row" id="showUserMessageRow" style="display: none">
+                                <div class="col-xs-3"></div>
+                                <b style="color: red;margin-left: 20px;">
+                                    <div class="col-xs-9" id="showUserMessage" style="font-size: 15px;"></div>
+                                </b>
+                            </div>
+                            <div class="row" style="padding-top: 10px">
+                                <div class="col-xs-3" style="text-align: right">
+                                </div>
+                                <div class="col-xs-6">
+                                    <b><input placeholder="Password" class="form-control" type="password" id="passwordField"
+                                            required></b>
+                                </div>
+                                <div class="col-xs-3">
+                                </div>
+                            </div>
+                            <div class="row" id="showPasswordMessageRow" style="display: none">
+                                <div class="col-xs-3"></div>
+                                <b style="color: red;margin-left: 20px;">
+                                    <div class="col-xs-9" id="showPasswordMessage" style="font-size: 15px;"></div>
+                                </b>
+                            </div>
+                            <div class="row" style="margin-top: 15px">
+                                <div class="col-xs-3"></div>
+                                <div class="col-xs-6" style="margin-left: 5px;">
+                                    <button id="submitCredentials" type="button" class="btn btn-primary" style="font-size: 20px;border-color: #178ff2;background-color: #178ff2"><b>Login</b></button>
+                                </div>
+                                <div class="col-xs-3"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-3"></div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div id="secondScreen" style="margin-top: 80px; display: none">
+        <div class="container">
+            <div class="panel panel-default">
+                <div class="panel-heading" style="background-color:black">
+                    <div class="row">
+                        <div class="col-xs-10">
+                            <h2 style="color: white">What do you want to do?</h2>
+                        </div>
+                        <div class="col-xs-2">
+                            <button type="button" id="logoutButton" class="btn" style="background-color: gray;color: white;font-size: 17px;margin-top: 12px;"><b>Logout</b></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 25px;margin-bottom: 25px;">
+                    <div class="col-xs-3">
+                        <button type="button" class="btn btn-success" style="color: white;margin-left: 30px" id="startButton"><b>Start</b></button>
+                    </div>
+                    <div class="col-xs-3">
+                        <button type="button" class="btn btn-primary" style="color: white" id="reStartButton"><b>Re-Start</b></button>
+                    </div>
+                    <div class="col-xs-3">
+                        <button type="button" class="btn btn-warning" style="color: white" id="pauseButton"><b>Pause</b></button>
+                    </div>
+                    <div class="col-xs-3">
+                        <button type="button" class="btn btn-danger" style="color: white" id="stopButton"><b>Stop</b></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            var loginInfo = {
+                "sd": "1",
+                "gopikrishna": "test123",
+                "rahul": "tst111",
+                "rachit": "tst1122",
+                "divyansh": "tst3333"
+            };
+            var tempUsername = "";
+            var tempPassword = "";
+
+            $('#submitCredentials').click(function () {
+                tempUsername = $('#userNameField').val();
+                tempPassword = $('#passwordField').val();
+                if (Object.keys(loginInfo).includes(tempUsername.toLowerCase().toString())) {
+                    $('#showUserMessageRow').hide();
+                    if (tempPassword.toLowerCase().toString() == loginInfo[tempUsername.toLowerCase()]) {
+                        console.log("Login Successfull");
+                        $('#loginScreen').hide();
+                        $('#secondScreen').show();
+                    } else {
+                        console.log("Password Incorrect");
+                        $('#showPasswordMessage').append("<b>" + "Password is incorrect" + "<b>");
+                        $('#showPasswordMessageRow').show();
+                    }
+                } else {
+                    console.log("User does not exist");
+                    $('#showPasswordMessageRow').hide();
+                    $('#showUserMessage').replaceWith(function () {
+                        return "User does not exist";
+                    });
+                    $('#showUserMessageRow').show();
+                }
+            })
+            $('#logoutButton').click(function () {
+                $('#passwordField').val('');
+                $('#userNameField').val('');
+                $('#secondScreen').hide();
+                $('#loginScreen').show();
+                console.log("Logout Successfully");
+            })
+        })
+
+        $('#startButton').click(function () {
+            nodeServices("start");
+        })
+        $('#reStartButton').click(function () {
+            nodeServices("restart");
+        })
+        
+        function nodeServices(operation){
+            $.ajax({
+                url: '/' + operation,
+                type: 'GET',
+                success: function (data) {
+                    console.log('Successfully: '+ operation + "ed app");
+                },
+                error: function (xhr, status, error) {
+                    console.log('Error: ' + error);
+                },
+            });
+        } 
+    </script>
+</body>
+
+</html>
